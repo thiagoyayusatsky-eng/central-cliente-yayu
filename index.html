@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Yayu_Net - Central do Cliente</title>
+<title>Yayu_Net</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
 
@@ -11,70 +11,67 @@
 body {
     margin: 0;
     font-family: 'Poppins', sans-serif;
-    background: radial-gradient(circle at top, #000000, #050505);
-    color: #fff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
+    background: black;
+    color: white;
+    overflow: hidden;
+}
+
+/* FUNDO ANIMADO COM PARTÍCULAS */
+canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 0;
 }
 
 /* CONTAINER */
 .container {
+    position: relative;
+    z-index: 2;
     text-align: center;
-    padding: 40px;
     max-width: 420px;
-    width: 90%;
+    margin: auto;
+    top: 50%;
+    transform: translateY(-50%);
+    padding: 40px;
     border-radius: 20px;
+    backdrop-filter: blur(20px);
     background: rgba(255,255,255,0.03);
-    backdrop-filter: blur(15px);
-    box-shadow: 0 0 50px rgba(0,191,255,0.2);
-    border: 1px solid rgba(0,191,255,0.1);
-    animation: fade 1s ease;
-}
-
-@keyframes fade {
-    from {opacity: 0; transform: translateY(40px);}
-    to {opacity: 1; transform: translateY(0);}
+    box-shadow: 0 0 60px rgba(0,191,255,0.3);
 }
 
 /* LOGO */
 .logo {
-    font-size: 55px;
-    margin-bottom: 10px;
-    text-shadow: 0 0 20px #00bfff;
+    font-size: 60px;
+    text-shadow: 0 0 25px #00bfff;
 }
 
 /* NOME */
 .nome {
-    font-size: 32px;
+    font-size: 40px;
     font-weight: 800;
     color: #00bfff;
-    letter-spacing: 1px;
-    margin-bottom: 5px;
+    text-shadow: 0 0 25px #00bfff;
 }
 
-/* FRASE IMPACTO */
+/* FRASES */
 .frase {
-    font-size: 15px;
+    margin: 15px 0;
     color: #ccc;
-    margin-bottom: 20px;
+    font-size: 15px;
 }
 
-/* TEXTO */
-.texto {
-    font-size: 14px;
-    color: #aaa;
-    margin-bottom: 20px;
+.frase strong {
+    color: #00bfff;
 }
 
-/* BOTÃO PRINCIPAL */
+/* BOTÃO */
 .botao {
     display: block;
-    padding: 15px;
     margin: 20px 0;
+    padding: 16px;
     background: linear-gradient(45deg, #00bfff, #0077ff);
-    color: #fff;
+    color: white;
     text-decoration: none;
     border-radius: 12px;
     font-weight: 600;
@@ -82,14 +79,14 @@ body {
 }
 
 .botao:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 25px #00bfff;
+    transform: scale(1.08);
+    box-shadow: 0 0 35px #00bfff;
 }
 
-/* WHATSAPP */
+/* WHATS */
 .whatsapp {
     display: block;
-    padding: 13px;
+    padding: 14px;
     background: #25D366;
     color: white;
     text-decoration: none;
@@ -99,21 +96,15 @@ body {
 }
 
 .whatsapp:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 20px #25D366;
+    transform: scale(1.08);
+    box-shadow: 0 0 25px #25D366;
 }
 
-/* FRASE FINAL */
-.destaque {
+/* RODAPÉ */
+.footer {
     margin-top: 25px;
     font-size: 13px;
     color: #777;
-}
-
-/* FRASE FORTE */
-.impacto {
-    color: #00bfff;
-    font-weight: 600;
 }
 </style>
 
@@ -121,36 +112,80 @@ body {
 
 <body>
 
+<canvas id="bg"></canvas>
+
 <div class="container">
 
-    <div class="logo">📶</div>
+    <div class="logo">📡</div>
 
     <div class="nome">Yayu_Net</div>
 
     <div class="frase">
-        Internet rápida, estável e feita para quem não aceita ficar offline.
+        ⚡ Internet de alta performance.<br>
+        📶 Conexão estável, rápida e sem limites.
     </div>
 
-    <div class="texto">
-        Acesse suas <span class="impacto">faturas</span>, acompanhe seus serviços  
-        e tenha total controle — simples, rápido e seguro.
+    <div class="frase">
+        Acesse suas <strong>faturas</strong> e tenha controle total  
+        da sua conexão com apenas um clique.
     </div>
 
     <a class="botao" href="https://yayu.sgp.tsmx.com.br/accounts/central/login" target="_blank">
-        🔐 ACESSAR MINHAS FATURAS
+        🔐 ACESSAR FATURAS
     </a>
 
     <a class="whatsapp" href="https://wa.me/5513988777008" target="_blank">
         💬 SUPORTE VIA WHATSAPP
     </a>
 
-    <div class="destaque">
-        ⚡ Mais velocidade • 📡 Mais estabilidade • 🤝 Mais confiança
+    <div class="footer">
+        🚀 Mais velocidade • 🔒 Mais segurança • 🤝 Mais confiança
         <br><br>
-        Indique a <span class="impacto">Yayu_Net</span> e leve qualidade para quem você gosta.
+        Indique a <strong>Yayu_Net</strong> e compartilhe qualidade.
     </div>
 
 </div>
+
+<script>
+const canvas = document.getElementById("bg");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let particles = [];
+
+for (let i = 0; i < 100; i++) {
+    particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: Math.random() * 2,
+        speed: Math.random() * 1
+    });
+}
+
+function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = "#00bfff";
+
+    particles.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+
+        p.y -= p.speed;
+
+        if (p.y < 0) {
+            p.y = canvas.height;
+        }
+    });
+
+    requestAnimationFrame(animate);
+}
+
+animate();
+</script>
 
 </body>
 </html>
