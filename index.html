@@ -3,35 +3,37 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<title>Yayu | Fibra Óptica, Wi-Fi e Redes de Alta Performance</title>
-<meta name="description" content="Yayu - Telecom e redes inteligentes. Internet fibra óptica com link dedicado, Wi-Fi mesh, suporte 24h e fatura online. Acesse já seu painel de faturas.">
+<title>Yayu | Fibra Óptica, Wi-Fi 6 e Fatura Inteligente</title>
+<meta name="description" content="Yayu Telecom - Internet fibra óptica de alta performance, link dedicado, Wi-Fi mesh, suporte 24h e gestão de faturas simplificada.">
 <style>
   * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    user-select: none; /* evita seleção indesejada, sem prejudicar cliques */
   }
 
   :root {
-    --cyan: #00e5ff;
-    --blue: #0066ff;
-    --blue-dark: #0044cc;
-    --purple: #7c3aed;
-    --dark-bg: #010101;
-    --glass-edge: rgba(0, 229, 255, 0.2);
-    --success: #25d366;
+    --cyan: #00f2ff;
+    --blue: #3b82f6;
+    --blue-dark: #1e40af;
+    --purple: #a855f7;
+    --dark-deep: #03050b;
+    --glass-edge: rgba(0, 242, 255, 0.25);
+    --success: #10b981;
+    --transition-smooth: cubic-bezier(0.23, 1, 0.32, 1);
   }
 
   body {
-    font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Poppins', sans-serif;
-    background-color: var(--dark-bg);
+    font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--dark-deep);
     color: #fff;
     overflow-x: hidden;
     scroll-behavior: smooth;
   }
 
-  /* BACKGROUND DINÂMICO TELECOM */
-  canvas#bgCanvas {
+  /* CANVAS INTERATIVO (partículas + mouse) */
+  canvas#networkCanvas {
     position: fixed;
     top: 0;
     left: 0;
@@ -39,42 +41,28 @@
     height: 100%;
     display: block;
     z-index: 0;
-    pointer-events: none;
-    background: radial-gradient(circle at 20% 30%, #021a2a, #000000 90%);
+    pointer-events: none; /* permitir interação com elementos acima */
   }
 
-  /* Efeito de ondas / sinal (elementos flutuantes) */
-  .wave-bg {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 180px;
-    background: repeating-linear-gradient(transparent 0px, transparent 29px, rgba(0, 229, 255, 0.02) 30px, rgba(0, 102, 255, 0.03) 32px);
-    pointer-events: none;
-    z-index: 1;
-    mask-image: linear-gradient(to top, black, transparent);
-  }
-
-  .orb {
+  /* Efeitos de fundo */
+  .glow-orb {
     position: fixed;
     border-radius: 50%;
     filter: blur(100px);
     pointer-events: none;
     z-index: 1;
-    animation: floatGlow 12s infinite alternate;
+    animation: floatPulse 18s infinite alternate;
+  }
+  .orb1 { width: 600px; height: 600px; background: radial-gradient(circle, rgba(59,130,246,0.2), transparent 80%); top: -200px; left: -200px; }
+  .orb2 { width: 550px; height: 550px; background: radial-gradient(circle, rgba(0,242,255,0.12), transparent 85%); bottom: -150px; right: -100px; animation-duration: 22s; }
+  .orb3 { width: 450px; height: 450px; background: radial-gradient(circle, rgba(168,85,247,0.1), transparent 75%); bottom: 10%; left: 60%; animation-duration: 25s; }
+
+  @keyframes floatPulse {
+    0% { transform: translate(0, 0) scale(1); opacity: 0.5; }
+    100% { transform: translate(40px, -40px) scale(1.2); opacity: 0.8; }
   }
 
-  .o1 { width: 550px; height: 550px; background: radial-gradient(circle, rgba(0,100,255,0.2), transparent 70%); top: -150px; left: -100px; }
-  .o2 { width: 500px; height: 500px; background: radial-gradient(circle, rgba(0,229,255,0.1), transparent 70%); bottom: -80px; right: -50px; animation-duration: 14s; }
-  .o3 { width: 400px; height: 400px; background: radial-gradient(circle, rgba(124,58,237,0.12), transparent 70%); bottom: 10%; left: 60%; animation-duration: 15s; }
-
-  @keyframes floatGlow {
-    0% { transform: translate(0, 0) scale(1); opacity: 0.4; }
-    100% { transform: translate(30px, -30px) scale(1.2); opacity: 0.7; }
-  }
-
-  /* Layout principal */
+  /* CAMADA PRINCIPAL */
   .page {
     position: relative;
     z-index: 10;
@@ -84,22 +72,27 @@
     align-items: center;
   }
 
-  /* NAVBAR PROFISSIONAL */
+  /* NAVBAR COM VIDRO + MOVIMENTO SUTIL */
   .glass-nav {
     width: 90%;
     max-width: 1280px;
-    margin-top: 24px;
-    padding: 12px 28px;
-    background: rgba(2, 4, 8, 0.75);
+    margin-top: 28px;
+    padding: 12px 32px;
+    background: rgba(3, 5, 11, 0.65);
     backdrop-filter: blur(16px);
     border: 1px solid var(--glass-edge);
-    border-radius: 80px;
+    border-radius: 100px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
     gap: 16px;
-    box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+    transition: all 0.3s var(--transition-smooth);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+  }
+  .glass-nav:hover {
+    border-color: rgba(0, 242, 255, 0.6);
+    box-shadow: 0 0 20px rgba(0, 242, 255, 0.1);
   }
 
   .brand {
@@ -107,181 +100,174 @@
     align-items: center;
     gap: 12px;
   }
-
   .brand-icon {
     width: 48px;
     height: 48px;
     background: linear-gradient(135deg, var(--cyan), var(--blue));
-    border-radius: 16px;
+    border-radius: 18px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 0 20px rgba(0, 229, 255, 0.5);
+    box-shadow: 0 0 15px rgba(0, 242, 255, 0.6);
+    animation: subtleGlow 2s infinite alternate;
   }
-
-  .brand-icon svg {
-    width: 28px;
-    height: 28px;
-    stroke: #fff;
-    stroke-width: 1.6;
-    fill: none;
+  @keyframes subtleGlow {
+    0% { box-shadow: 0 0 5px rgba(0,242,255,0.3);}
+    100% { box-shadow: 0 0 18px rgba(0,242,255,0.7);}
   }
-
+  .brand-icon svg { width: 26px; height: 26px; stroke: #fff; stroke-width: 1.8; fill: none; }
   .brand-name {
     font-size: 28px;
     font-weight: 800;
     letter-spacing: -1px;
-    background: linear-gradient(135deg, #fff, var(--cyan), #5f9eff);
+    background: linear-gradient(135deg, #FFF, var(--cyan), #90e0ff);
     background-size: 200% auto;
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
-
   .nav-links {
     display: flex;
-    gap: 16px;
+    gap: 18px;
     align-items: center;
-    flex-wrap: wrap;
   }
-
   .nav-link {
-    color: rgba(255,255,255,0.75);
+    color: rgba(255,255,255,0.8);
     text-decoration: none;
     font-weight: 500;
-    padding: 8px 16px;
+    padding: 8px 18px;
     border-radius: 40px;
     transition: 0.2s;
     font-size: 0.9rem;
+    backdrop-filter: blur(4px);
   }
-
   .nav-link:hover {
-    background: rgba(0, 229, 255, 0.15);
+    background: rgba(0, 242, 255, 0.2);
     color: var(--cyan);
+    transform: translateY(-2px);
   }
-
   .btn-primary {
-    background: linear-gradient(100deg, var(--cyan), var(--blue));
-    padding: 8px 22px;
+    background: linear-gradient(105deg, var(--cyan), var(--blue));
+    padding: 8px 26px;
     border-radius: 40px;
     font-weight: 700;
     color: #010101;
     text-decoration: none;
-    transition: 0.25s;
-    box-shadow: 0 2px 12px rgba(0,100,255,0.5);
+    transition: 0.25s var(--transition-smooth);
+    box-shadow: 0 0 12px rgba(0,100,255,0.5);
   }
-
   .btn-primary:hover {
-    transform: scale(1.03);
-    box-shadow: 0 8px 24px rgba(0,160,255,0.7);
-    color: #fff;
+    transform: scale(1.05);
+    box-shadow: 0 8px 24px rgba(0,200,255,0.7);
+    background: linear-gradient(105deg, #2affff, #2b7fff);
+    color: white;
   }
 
-  /* HERO */
+  /* HERO + ANIMAÇÃO DE ENTRADA */
   .hero {
-    max-width: 1000px;
-    padding: 70px 24px 60px;
+    max-width: 1100px;
+    padding: 50px 24px 60px;
     text-align: center;
+    animation: fadeSlideUp 0.8s var(--transition-smooth);
+  }
+  @keyframes fadeSlideUp {
+    from { opacity: 0; transform: translateY(30px);}
+    to { opacity: 1; transform: translateY(0);}
   }
 
-  /* Sinal animado (Wi-Fi / rede) */
+  /* Sinal Wi-Fi Interativo (movimento) */
   .signal-container {
     display: flex;
     justify-content: center;
-    margin-bottom: 30px;
+    margin-bottom: 28px;
+    cursor: pointer;
   }
   .wifi-pulse {
     position: relative;
-    width: 100px;
-    height: 100px;
+    width: 110px;
+    height: 110px;
   }
   .wifi-pulse .arc {
     position: absolute;
-    border: 3px solid rgba(0, 229, 255, 0.7);
+    border: 3px solid var(--cyan);
     border-top: none;
     border-left: none;
     border-radius: 50%;
     transform: rotate(225deg);
     left: 50%;
     bottom: 30%;
-    animation: pulseWave 2s infinite;
+    animation: pulseWave 1.8s infinite ease-out;
+    opacity: 0.7;
   }
-  .arc1 { width: 40px; height: 40px; margin-left: -20px; animation-delay: 0s; }
-  .arc2 { width: 70px; height: 70px; margin-left: -35px; animation-delay: 0.3s; }
-  .arc3 { width: 100px; height: 100px; margin-left: -50px; animation-delay: 0.6s; }
+  .arc1 { width: 44px; height: 44px; margin-left: -22px; animation-delay: 0s; }
+  .arc2 { width: 76px; height: 76px; margin-left: -38px; animation-delay: 0.3s; }
+  .arc3 { width: 108px; height: 108px; margin-left: -54px; animation-delay: 0.6s; }
   .dot-center {
     position: absolute;
     bottom: 22%;
     left: 50%;
-    width: 14px;
-    height: 14px;
+    width: 16px;
+    height: 16px;
     background: var(--cyan);
     border-radius: 50%;
     transform: translateX(-50%);
     box-shadow: 0 0 20px var(--cyan);
+    animation: dotPulse 1.2s infinite alternate;
   }
   @keyframes pulseWave {
-    0% { opacity: 1; transform: rotate(225deg) scale(0.8);}
-    100% { opacity: 0; transform: rotate(225deg) scale(1.5);}
+    0% { opacity: 0.8; transform: rotate(225deg) scale(0.7);}
+    100% { opacity: 0; transform: rotate(225deg) scale(1.6);}
+  }
+  @keyframes dotPulse {
+    0% { box-shadow: 0 0 5px var(--cyan); transform: translateX(-50%) scale(1);}
+    100% { box-shadow: 0 0 30px var(--cyan); transform: translateX(-50%) scale(1.2);}
   }
 
   .eyebrow {
     font-size: 13px;
-    letter-spacing: 3px;
+    letter-spacing: 4px;
     font-weight: 600;
     color: var(--cyan);
-    margin-bottom: 20px;
+    margin-bottom: 18px;
   }
-
   h1 {
-    font-size: clamp(48px, 8vw, 100px);
+    font-size: clamp(50px, 9vw, 110px);
     font-weight: 900;
     line-height: 1;
     letter-spacing: -3px;
-    margin-bottom: 24px;
-  }
-  .ht1 {
-    display: block;
-    color: #fff;
+    margin-bottom: 22px;
   }
   .ht2 {
-    background: linear-gradient(110deg, var(--cyan), #2b7fff, var(--purple));
+    background: linear-gradient(115deg, var(--cyan), #5f9eff, var(--purple));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
-    display: inline-block;
   }
   .hero-desc {
     font-size: 1.2rem;
-    color: rgba(255,255,255,0.6);
-    max-width: 560px;
-    margin: 0 auto 40px;
-    line-height: 1.5;
-  }
-  .hero-desc strong {
-    color: white;
-    font-weight: 600;
+    color: rgba(255,255,255,0.65);
+    max-width: 600px;
+    margin: 0 auto 36px;
   }
 
-  /* CONTATO RÁPIDO (telefones sempre visíveis) */
+  /* BARRA DE CONTATO VIBRANTE */
   .contact-bar {
-    background: rgba(0, 20, 40, 0.6);
-    backdrop-filter: blur(8px);
+    background: rgba(0, 20, 40, 0.55);
+    backdrop-filter: blur(12px);
     border-radius: 60px;
     display: inline-flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 24px;
-    padding: 12px 28px;
-    margin-bottom: 48px;
-    border: 1px solid rgba(0,229,255,0.2);
+    gap: 28px;
+    padding: 12px 32px;
+    margin-bottom: 52px;
+    border: 1px solid rgba(0,242,255,0.3);
+    transition: 0.2s;
   }
   .contact-item {
     display: flex;
     align-items: center;
     gap: 10px;
-    font-size: 1rem;
-    font-weight: 500;
   }
   .contact-item svg {
     width: 20px;
@@ -290,190 +276,196 @@
     stroke-width: 1.8;
   }
   .contact-item a {
-    color: #fff;
+    color: white;
     text-decoration: none;
+    font-weight: 500;
     transition: 0.2s;
   }
   .contact-item a:hover {
     color: var(--cyan);
+    text-shadow: 0 0 5px cyan;
   }
 
-  /* CARDS PRINCIPAIS */
+  /* CARDS COM TILT 3D E MOVIMENTO EXTREMO */
   .cards-grid {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 28px;
     width: 100%;
-    max-width: 780px;
+    max-width: 800px;
     margin: 0 auto;
   }
-
+  .card-fatura, .card-support {
+    transition: all 0.3s var(--transition-smooth);
+    will-change: transform;
+  }
   .card-fatura {
-    background: linear-gradient(125deg, rgba(0,100,255,0.1), rgba(0,229,255,0.03));
-    border: 1px solid rgba(0,229,255,0.3);
-    border-radius: 32px;
+    background: linear-gradient(125deg, rgba(0, 100, 255, 0.12), rgba(0, 229, 255, 0.05));
+    border: 1px solid rgba(0, 242, 255, 0.35);
+    border-radius: 44px;
     padding: 32px;
     display: flex;
     align-items: center;
     gap: 28px;
     text-decoration: none;
-    transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
   }
-  .card-fatura:hover {
-    transform: translateY(-6px);
-    border-color: var(--cyan);
-    box-shadow: 0 20px 40px rgba(0, 100, 255, 0.3);
+  .card-fatura::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(0,242,255,0.08), transparent);
+    opacity: 0;
+    transition: opacity 0.5s;
+    pointer-events: none;
+  }
+  .card-fatura:hover::after {
+    opacity: 1;
   }
   .icon-big {
     background: linear-gradient(145deg, var(--cyan), var(--blue));
-    border-radius: 28px;
-    width: 80px;
-    height: 80px;
+    border-radius: 32px;
+    width: 84px;
+    height: 84px;
     display: flex;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
   }
   .icon-big svg {
-    width: 44px;
-    height: 44px;
-    stroke: #fff;
+    width: 46px;
+    height: 46px;
+    stroke: white;
     stroke-width: 1.6;
   }
   .text-card h3 {
-    font-size: 24px;
+    font-size: 26px;
     font-weight: 800;
   }
   .text-card p {
-    color: rgba(255,255,255,0.6);
+    color: rgba(255,255,255,0.65);
     margin-top: 6px;
   }
   .arrow-icon {
-    margin-left: auto;
-    background: rgba(0,229,255,0.1);
-    border-radius: 40px;
-    padding: 12px;
+    background: rgba(0,242,255,0.15);
+    border-radius: 60px;
+    padding: 12px 18px;
+    font-size: 26px;
+    transition: 0.2s;
+  }
+  .card-fatura:hover .arrow-icon {
+    transform: translateX(8px);
+    background: rgba(0,242,255,0.3);
   }
 
   .row-cards {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    gap: 24px;
   }
   .card-support {
-    background: rgba(10, 20, 28, 0.7);
-    backdrop-filter: blur(6px);
+    background: rgba(10, 20, 32, 0.7);
+    backdrop-filter: blur(8px);
     border: 1px solid rgba(255,255,255,0.08);
-    border-radius: 28px;
+    border-radius: 36px;
     padding: 28px;
     text-decoration: none;
     transition: 0.25s;
-  }
-  .card-support:hover {
-    background: rgba(0, 229, 255, 0.08);
-    border-color: rgba(0,229,255,0.5);
-    transform: translateY(-4px);
-  }
-  .support-icon {
-    background: var(--bg-glow);
-    width: 54px;
-    height: 54px;
-    border-radius: 18px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 20px;
+    cursor: pointer;
   }
   .support-icon svg {
-    width: 28px;
-    height: 28px;
+    width: 30px;
+    height: 30px;
     stroke: var(--cyan);
-    stroke-width: 1.6;
+    stroke-width: 1.7;
   }
-  .card-support h4 { font-size: 20px; font-weight: 800; margin-bottom: 8px; }
-  .card-support p { color: rgba(255,255,255,0.5); font-size: 14px; line-height: 1.4; margin-bottom: 12px; }
-  .badge-link { color: var(--cyan); font-weight: 600; font-size: 14px; display: inline-flex; align-items: center; gap: 4px;}
+  .badge-link {
+    color: var(--cyan);
+    font-weight: 600;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .card-support:hover {
+    background: rgba(0, 229, 255, 0.12);
+    border-color: rgba(0,242,255,0.6);
+    transform: translateY(-6px) scale(1.01);
+  }
 
-  /* features adicionais */
+  /* tech-stats com movimentos */
   .tech-stats {
     display: flex;
     justify-content: center;
-    gap: 28px;
-    margin: 48px 0 32px;
+    gap: 32px;
+    margin: 48px 0 28px;
     flex-wrap: wrap;
   }
   .stat {
-    background: rgba(0,0,0,0.4);
-    border-radius: 40px;
-    padding: 10px 28px;
-    border: 1px solid rgba(0,229,255,0.2);
-    text-align: center;
+    background: rgba(0, 20, 30, 0.5);
+    border-radius: 60px;
+    padding: 12px 28px;
+    border: 1px solid rgba(0,242,255,0.2);
+    transition: all 0.2s;
+    cursor: default;
+  }
+  .stat:hover {
+    border-color: var(--cyan);
+    transform: translateY(-3px);
+    background: rgba(0,242,255,0.05);
   }
   .stat-number {
     font-size: 28px;
     font-weight: 800;
-    background: linear-gradient(135deg, #fff, var(--cyan));
+    background: linear-gradient(135deg, #FFF, var(--cyan));
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
-
-  /* RODAPÉ */
   footer {
     width: 100%;
-    border-top: 1px solid rgba(0,229,255,0.1);
+    border-top: 1px solid rgba(0,242,255,0.15);
     padding: 32px 24px;
     text-align: center;
     font-size: 13px;
     color: rgba(255,255,255,0.4);
   }
-  .footer-links {
-    display: flex;
-    justify-content: center;
-    gap: 32px;
-    flex-wrap: wrap;
-    margin-bottom: 20px;
-  }
-  .footer-links a {
-    color: rgba(255,255,255,0.5);
-    text-decoration: none;
-  }
-  .footer-links a:hover {
-    color: var(--cyan);
-  }
 
   @media (max-width: 700px) {
-    .glass-nav { padding: 12px 20px; border-radius: 40px;}
+    .glass-nav { padding: 12px 20px; border-radius: 50px; }
     .row-cards { grid-template-columns: 1fr; }
-    .card-fatura { flex-direction: column; text-align: center; gap: 16px;}
+    .card-fatura { flex-direction: column; text-align: center; gap: 16px; }
     .arrow-icon { margin-left: 0; }
-    .contact-bar { gap: 16px; padding: 12px 18px; font-size: 12px; }
+    .contact-bar { gap: 16px; padding: 12px 18px; }
   }
 </style>
 </head>
 <body>
 
-<canvas id="bgCanvas"></canvas>
-<div class="orb o1"></div>
-<div class="orb o2"></div>
-<div class="orb o3"></div>
-<div class="wave-bg"></div>
+<canvas id="networkCanvas"></canvas>
+<div class="glow-orb orb1"></div>
+<div class="glow-orb orb2"></div>
+<div class="glow-orb orb3"></div>
 
 <div class="page">
-  <!-- NAVBAR -->
   <div class="glass-nav">
     <div class="brand">
       <div class="brand-icon">
-        <svg viewBox="0 0 24 24" fill="none"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1.5" fill="#fff" stroke="none"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1.5" fill="#fff" stroke="none"/></svg>
       </div>
       <div class="brand-name">YAYU</div>
     </div>
     <div class="nav-links">
-      <a href="https://wa.me/5513988777008" target="_blank" class="nav-link">📞 Suporte 24h</a>
-      <a href="https://yayu.sgp.tsmx.com.br/accounts/central/login" target="_blank" class="btn-primary">🔐 Painel de Faturas</a>
+      <a href="https://wa.me/5513988777008" target="_blank" class="nav-link">📡 Suporte 24h</a>
+      <a href="https://yayu.sgp.tsmx.com.br/accounts/central/login" target="_blank" class="btn-primary">🔐 Área de Faturas</a>
     </div>
   </div>
 
-  <!-- HERO COM NOME DESTACADO -->
   <div class="hero">
     <div class="signal-container">
       <div class="wifi-pulse">
@@ -481,17 +473,16 @@
         <div class="dot-center"></div>
       </div>
     </div>
-    <div class="eyebrow">TELECOM · FIBRA ÓPTICA · REDES INTELIGENTES</div>
+    <div class="eyebrow">YAYU TELECOM · FIBRA + WIFI 6 MESH</div>
     <h1>
       <span class="ht1">Yayu</span>
-      <span class="ht2"> conecta você.</span>
+      <span class="ht2"> alta performance.</span>
     </h1>
     <div class="hero-desc">
-      <strong>Internet de alta performance</strong>, Wi-Fi mesh e rede dedicada.  
-      Fatura online, suporte humano real, e o melhor sinal da região.
+      <strong>Internet de qualidade profissional</strong>, link dedicado e suporte ágil.  
+      Gerencie suas faturas e tenha conectividade sem limites.
     </div>
 
-    <!-- BARRA DE TELEFONES e LINK SITE -->
     <div class="contact-bar">
       <div class="contact-item">
         <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.72 12 19.79 19.79 0 0 1 1.65 3.18 2 2 0 0 1 3.62 1h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.56a16 16 0 0 0 6 6l.87-.87a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
@@ -507,138 +498,267 @@
       </div>
     </div>
 
-    <!-- PAINEL DE FATURAS + ACESSO DESTAQUE -->
     <div class="cards-grid">
-      <a href="https://yayu.sgp.tsmx.com.br/accounts/central/login" target="_blank" class="card-fatura">
+      <a href="https://yayu.sgp.tsmx.com.br/accounts/central/login" target="_blank" class="card-fatura" id="mainCard">
         <div class="icon-big">
           <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/></svg>
         </div>
         <div class="text-card">
-          <h3>Acessar Painel de Faturas</h3>
-          <p>2ª via de boleto, histórico, contratos e gestão online — 100% seguro.</p>
+          <h3>Consultar & Pagar Faturas</h3>
+          <p>2ª via, boletos, histórico e contratos em tempo real — Área do Cliente.</p>
         </div>
         <div class="arrow-icon">→</div>
       </a>
-
       <div class="row-cards">
-        <a href="https://wa.me/5513988777008" target="_blank" class="card-support" style="--bg-glow:rgba(37,211,102,0.1)">
+        <a href="https://wa.me/5513988777008" target="_blank" class="card-support">
           <div class="support-icon">
             <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
           </div>
           <h4>WhatsApp Oficial</h4>
-          <p>Atendimento humano e rápido. Tire dúvidas, contrate ou peça suporte técnico.</p>
+          <p>Atendimento rápido e humano. Suporte técnico, vendas e 2ª via.</p>
           <span class="badge-link">Chamar agora →</span>
         </a>
-        <div class="card-support" style="--bg-glow:rgba(124,58,237,0.1)">
+        <div class="card-support" id="suporteCard">
           <div class="support-icon">
             <svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
           </div>
           <h4>Suporte Técnico 24h</h4>
-          <p>Nossa equipe de engenharia de redes garante estabilidade e baixa latência.</p>
+          <p>Engenharia de redes disponível, menor latência e estabilidade.</p>
           <span class="badge-link">(13) 98877-7008 →</span>
         </div>
       </div>
     </div>
 
-    <!-- métricas de qualidade -->
     <div class="tech-stats">
-      <div class="stat"><div class="stat-number">99.9%</div><div>Uptime</div></div>
-      <div class="stat"><div class="stat-number">&lt;30min</div><div>Resposta técnica</div></div>
-      <div class="stat"><div class="stat-number">GPON</div><div>Tecnologia FTTH</div></div>
-      <div class="stat"><div class="stat-number">WiFi 6</div><div>Redes mesh</div></div>
+      <div class="stat"><div class="stat-number">99.95%</div><div>Disponibilidade</div></div>
+      <div class="stat"><div class="stat-number">&lt;20min</div><div>Resposta local</div></div>
+      <div class="stat"><div class="stat-number">FTTH</div><div>Fibra pura</div></div>
+      <div class="stat"><div class="stat-number">WiFi 6E</div><div>Mesh Inteligente</div></div>
     </div>
-    <div style="margin-top: 8px; font-size: 12px; color: rgba(255,255,255,0.35); display: flex; gap: 12px; justify-content: center;">
-      <span>✔️ Cobertura fibra óptica</span>
-      <span>✔️ Link dedicado empresarial</span>
-      <span>✔️ Fatura no seu e-mail</span>
+    <div style="margin-top: 10px; font-size: 13px; color: rgba(255,255,255,0.4); display: flex; gap: 18px; justify-content: center;">
+      <span>⚡ Link dedicado</span>
+      <span>📄 Fatura digital + e-mail</span>
+      <span>🌐 Cobertura expansiva</span>
     </div>
   </div>
 
   <footer>
-    <div class="footer-links">
-      <a href="https://yayu.sgp.tsmx.com.br/accounts/central/login" target="_blank">Área do Cliente</a>
-      <a href="https://wa.me/5513988777008" target="_blank">WhatsApp Suporte</a>
-      <a href="#">Mapa de Cobertura</a>
-      <a href="#">Central de Ajuda</a>
+    <div class="footer-links" style="display: flex; justify-content: center; gap: 28px; flex-wrap: wrap; margin-bottom: 20px;">
+      <a href="https://yayu.sgp.tsmx.com.br/accounts/central/login" target="_blank" style="color: rgba(255,255,255,0.6); text-decoration: none;">📍 Área do Cliente</a>
+      <a href="https://wa.me/5513988777008" target="_blank" style="color: rgba(255,255,255,0.6); text-decoration: none;">💬 WhatsApp Yayu</a>
+      <a href="#" style="color: rgba(255,255,255,0.6); text-decoration: none;">📡 Mapa de Cobertura</a>
+      <a href="#" style="color: rgba(255,255,255,0.6); text-decoration: none;">⚙️ Central de Ajuda</a>
     </div>
-    <p>© 2025 Yayu Telecom — Todos os direitos reservados. Rede de alta performance.</p>
+    <p>© 2025 Yayu Telecom — Redes de Alta Performance & Conectividade Total.</p>
   </footer>
 </div>
 
 <script>
-  // Background profissional com micropartículas estilo fibra / dados
-  const canvas = document.getElementById('bgCanvas');
-  const ctx = canvas.getContext('2d');
-  let width = window.innerWidth;
-  let height = window.innerHeight;
+  (function() {
+    // ---- CANVAS INTERATIVO + MOVIMENTO (partículas sensíveis ao mouse) ----
+    const canvas = document.getElementById('networkCanvas');
+    const ctx = canvas.getContext('2d');
+    let width, height;
+    let mouseX = -1000, mouseY = -1000;
+    let mouseActive = false;
 
-  function resizeCanvas() {
-    width = canvas.width = window.innerWidth;
-    height = canvas.height = window.innerHeight;
-  }
-  window.addEventListener('resize', resizeCanvas);
-  resizeCanvas();
+    function resizeCanvas() {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
 
-  const particles = [];
-  const PARTICLE_COUNT = 110;
-
-  for (let i = 0; i < PARTICLE_COUNT; i++) {
-    particles.push({
-      x: Math.random() * width,
-      y: Math.random() * height,
-      radius: Math.random() * 1.8 + 0.6,
-      alpha: Math.random() * 0.6 + 0.1,
-      speedX: (Math.random() - 0.5) * 0.35,
-      speedY: (Math.random() - 0.5) * 0.2,
-      pulse: Math.random() * Math.PI * 2,
-    });
-  }
-
-  let time = 0;
-  function draw() {
-    ctx.clearRect(0, 0, width, height);
-    // gradiente de fundo sutil
-    const grad = ctx.createLinearGradient(0, 0, width, height);
-    grad.addColorStop(0, '#010a12');
-    grad.addColorStop(1, '#000306');
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, width, height);
-    
-    // linhas de interconexão (rede)
-    for (let i = 0; i < particles.length; i++) {
-      for (let j = i + 1; j < particles.length; j++) {
-        const dx = particles[i].x - particles[j].x;
-        const dy = particles[i].y - particles[j].y;
-        const dist = Math.hypot(dx, dy);
-        if (dist < 110) {
-          ctx.beginPath();
-          ctx.moveTo(particles[i].x, particles[i].y);
-          ctx.lineTo(particles[j].x, particles[j].y);
-          ctx.strokeStyle = `rgba(0, 180, 230, ${0.06 * (1 - dist / 110)})`;
-          ctx.lineWidth = 0.6;
-          ctx.stroke();
-        }
-      }
+    // Partículas dinâmicas
+    const PARTICLE_COUNT = 140;
+    const particles = [];
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      particles.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        radius: Math.random() * 2.4 + 0.8,
+        alpha: Math.random() * 0.7 + 0.2,
+        vx: (Math.random() - 0.5) * 0.35,
+        vy: (Math.random() - 0.5) * 0.25,
+        pulseSpeed: 0.02 + Math.random() * 0.03,
+        phase: Math.random() * Math.PI * 2,
+      });
     }
 
-    particles.forEach(p => {
-      p.x += p.speedX;
-      p.y += p.speedY;
-      if (p.x < -10) p.x = width + 5;
-      if (p.x > width + 10) p.x = -5;
-      if (p.y < -10) p.y = height + 5;
-      if (p.y > height + 10) p.y = -5;
-      
-      const glow = 0.3 + Math.sin(time * 0.002 + p.pulse) * 0.2;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(0, 229, 255, ${p.alpha * glow})`;
-      ctx.fill();
+    // rastreador do mouse para efeito de repulsão suave
+    window.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      mouseActive = true;
     });
-    time++;
-    requestAnimationFrame(draw);
-  }
-  draw();
+    window.addEventListener('mouseleave', () => {
+      mouseActive = false;
+      mouseX = -1000; mouseY = -1000;
+    });
+
+    let time = 0;
+    function drawNetwork() {
+      if (!ctx) return;
+      ctx.clearRect(0, 0, width, height);
+      
+      // fundo degradê sutil
+      const grad = ctx.createLinearGradient(0, 0, width*0.8, height);
+      grad.addColorStop(0, '#020812');
+      grad.addColorStop(1, '#000207');
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, width, height);
+      
+      // desenhar conexões (redes)
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.hypot(dx, dy);
+          if (dist < 98) {
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            const intensity = 0.08 * (1 - dist / 98);
+            ctx.strokeStyle = `rgba(0, 200, 245, ${intensity + 0.02})`;
+            ctx.lineWidth = 0.8;
+            ctx.stroke();
+          }
+        }
+      }
+      
+      // atualizar posições e interação com mouse (repulsão)
+      for (let p of particles) {
+        // mouse interaction: empurrar suavemente
+        if (mouseActive && mouseX > 0 && mouseY > 0) {
+          const dx = p.x - mouseX;
+          const dy = p.y - mouseY;
+          const dist = Math.hypot(dx, dy);
+          if (dist < 90) {
+            const angle = Math.atan2(dy, dx);
+            const force = (90 - dist) / 90 * 0.9;
+            p.vx += Math.cos(angle) * force * 0.3;
+            p.vy += Math.sin(angle) * force * 0.3;
+            // limite velocidade
+            const maxSpeed = 1.4;
+            if (Math.abs(p.vx) > maxSpeed) p.vx = p.vx > 0 ? maxSpeed : -maxSpeed;
+            if (Math.abs(p.vy) > maxSpeed) p.vy = p.vy > 0 ? maxSpeed : -maxSpeed;
+          }
+        }
+        // atrito
+        p.vx *= 0.99;
+        p.vy *= 0.99;
+        p.x += p.vx;
+        p.y += p.vy;
+        
+        // bordas elásticas suaves
+        if (p.x < 5) { p.x = 5; p.vx *= -0.5; }
+        if (p.x > width - 5) { p.x = width - 5; p.vx *= -0.5; }
+        if (p.y < 5) { p.y = 5; p.vy *= -0.5; }
+        if (p.y > height - 5) { p.y = height - 5; p.vy *= -0.5; }
+        
+        // brilho pulsante
+        const glow = 0.5 + Math.sin(time * 0.003 + p.phase) * 0.3;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(0, 220, 255, ${p.alpha * glow * 0.9})`;
+        ctx.fill();
+        // brilho extra
+        ctx.shadowBlur = 6;
+        ctx.shadowColor = '#0af';
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+      time++;
+      requestAnimationFrame(drawNetwork);
+    }
+    drawNetwork();
+
+    // ---- EFEITO TILT 3D NOS CARDS PRINCIPAIS (movimento ação) ----
+    const cards = document.querySelectorAll('.card-fatura, .card-support');
+    function handleTilt(e) {
+      if (window.innerWidth <= 768) return; // sem tilt em mobile
+      const card = e.currentTarget;
+      const rect = card.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+      const rotateX = (y - centerY) / 18;
+      const rotateY = (centerX - x) / 18;
+      card.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-4px)`;
+      card.style.transition = 'transform 0.1s ease-out';
+    }
+    function resetTilt(e) {
+      const card = e.currentTarget;
+      card.style.transform = `perspective(800px) rotateX(0deg) rotateY(0deg) translateY(0px)`;
+      card.style.transition = 'transform 0.35s cubic-bezier(0.2, 0.9, 0.4, 1.1)';
+    }
+    cards.forEach(card => {
+      card.addEventListener('mousemove', handleTilt);
+      card.addEventListener('mouseleave', resetTilt);
+    });
+    
+    // Adiciona Ripple de clique dinâmico para ação extra
+    function addRippleEffect(event, element) {
+      const ripple = document.createElement('span');
+      const rect = element.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height);
+      const x = event.clientX - rect.left - size / 2;
+      const y = event.clientY - rect.top - size / 2;
+      ripple.style.position = 'absolute';
+      ripple.style.width = ripple.style.height = `${size}px`;
+      ripple.style.left = `${x}px`;
+      ripple.style.top = `${y}px`;
+      ripple.style.borderRadius = '50%';
+      ripple.style.background = 'radial-gradient(circle, rgba(0,242,255,0.4), transparent)';
+      ripple.style.pointerEvents = 'none';
+      ripple.style.transform = 'scale(0)';
+      ripple.style.transition = 'transform 0.4s ease-out, opacity 0.4s';
+      ripple.style.opacity = '1';
+      element.style.position = 'relative';
+      element.style.overflow = 'hidden';
+      element.appendChild(ripple);
+      requestAnimationFrame(() => {
+        ripple.style.transform = 'scale(2)';
+        ripple.style.opacity = '0';
+      });
+      setTimeout(() => ripple.remove(), 500);
+    }
+    const clickableCards = document.querySelectorAll('.card-fatura, .card-support, .btn-primary, .nav-link');
+    clickableCards.forEach(el => {
+      el.addEventListener('click', (e) => {
+        if (el.classList.contains('card-support') && !el.href) {
+          if (el.id === 'suporteCard') window.location.href = 'tel:5513988777008';
+          e.preventDefault();
+        }
+        addRippleEffect(e, el);
+      });
+    });
+    
+    // Animação de entrada adicional: mover gradiente do background no título (movimento suave)
+    let titleAngle = 0;
+    function animateTitleGradient() {
+      const titleSpan = document.querySelector('.ht2');
+      if (titleSpan) {
+        titleAngle = (titleAngle + 0.5) % 360;
+        titleSpan.style.background = `linear-gradient(${titleAngle}deg, var(--cyan), #3b82f6, var(--purple))`;
+        titleSpan.style.webkitBackgroundClip = 'text';
+        titleSpan.style.backgroundClip = 'text';
+      }
+      requestAnimationFrame(animateTitleGradient);
+    }
+    animateTitleGradient();
+    
+    // pequeno efeito de flutuação no logo e navbar
+    const brandIcon = document.querySelector('.brand-icon');
+    if (brandIcon) {
+      brandIcon.addEventListener('mouseenter', () => {
+        brandIcon.style.animation = 'none';
+        brandIcon.style.transform = 'scale(1.05) rotate(3deg)';
+        setTimeout(() => { brandIcon.style.transform = ''; brandIcon.style.animation = 'subtleGlow 2s infinite alternate'; }, 200);
+      });
+    }
+  })();
 </script>
 </body>
 </html>
